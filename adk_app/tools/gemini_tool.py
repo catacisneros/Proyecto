@@ -3,9 +3,12 @@ import os, json, requests, google.auth
 from typing import Dict, Any
 from google.auth.transport.requests import Request
 
-PROJECT_ID = os.getenv("GCP_PROJECT")
-LOCATION = os.getenv("GCP_REGION", "us-central1")
+PROJECT_ID = os.getenv("GCP_PROJECT") or os.getenv("GOOGLE_CLOUD_PROJECT")
+LOCATION = os.getenv("GCP_REGION") or os.getenv("GOOGLE_CLOUD_REGION") or "us-central1"
 MODEL_ID = os.getenv("GEMINI_MODEL_ID", "gemini-1.5-pro-002")
+
+if not PROJECT_ID:
+    raise EnvironmentError("Set GCP_PROJECT or GOOGLE_CLOUD_PROJECT for Gemini API calls")
 
 ENDPOINT = (
     f"https://{LOCATION}-aiplatform.googleapis.com/v1beta1/"

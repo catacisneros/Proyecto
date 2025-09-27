@@ -7,10 +7,13 @@ import requests
 import google.auth
 from google.auth.transport.requests import Request
 
-PROJECT_ID = os.getenv("GCP_PROJECT")
-LOCATION = os.getenv("GCP_REGION", "us-central1")
+PROJECT_ID = os.getenv("GCP_PROJECT") or os.getenv("GOOGLE_CLOUD_PROJECT")
+LOCATION = os.getenv("GCP_REGION") or os.getenv("GOOGLE_CLOUD_REGION") or "us-central1"
 MODEL_ID = os.getenv("VEO_MODEL_ID", "veo-3.0-fast-generate-001")  # fast for demos
 OUTPUT_GCS = os.getenv("VEO_OUTPUT_GCS", "")  # e.g., gs://your-bucket/episodes/
+
+if not PROJECT_ID:
+    raise EnvironmentError("Set GCP_PROJECT or GOOGLE_CLOUD_PROJECT for Veo API calls")
 
 VEO_ENDPOINT = (
     f"https://{LOCATION}-aiplatform.googleapis.com/v1/"
