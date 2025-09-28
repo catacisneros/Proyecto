@@ -1,4 +1,4 @@
-from adk import Agent
+from google.adk import Agent
 
 class ChoiceImageAgent(Agent):
     name: str = "choice_image"

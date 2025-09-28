@@ -1,4 +1,4 @@
-from adk import Agent
+from google.adk import Agent
 from adk_app.tools.veo_tool import generate_video
 
 

@@ -1,6 +1,4 @@
 # adk_app/workflows/credit_card_episode.py
-from adk import SequentialAgent, ParallelAgent, LoopAgent
-
 from adk_app.agents.story_planner import StoryPlannerAgent
 from adk_app.agents.prompt_writer import PromptWriterAgent
 from adk_app.agents.video_agent import VideoAgent

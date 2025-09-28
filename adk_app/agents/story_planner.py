@@ -1,4 +1,4 @@
-from adk import Agent
+from google.adk import Agent
 from datetime import date
 
 CORE_OBJECTIVES = [

@@ -1,5 +1,4 @@
 python-dotenv
-adk
 requests
 google-auth
 google-auth-httplib2
@@ -9,6 +8,5 @@ google-cloud-storage
 google-adk
 fastapi
 uvicorn
-
 
 

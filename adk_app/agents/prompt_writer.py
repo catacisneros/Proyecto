@@ -1,4 +1,4 @@
-from adk import Agent
+from google.adk import Agent
 from adk_app.tools.gemini_tool import generate_shot_prompt
 
 class PromptWriterAgent(Agent):
