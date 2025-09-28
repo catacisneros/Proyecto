@@ -43,17 +43,15 @@ finlit-adk/
    - Ensure application default credentials are available via `gcloud auth application-default login` or by setting `GOOGLE_APPLICATION_CREDENTIALS` to a service-account JSON file.
 
 ## Running Locally
-1. Validate that required API keys and IDs are set:
-   ```bash
-   python -c "import config; config.validate_api_keys()"
-   ```
-2. Launch the API (choose one):
-   ```bash
-   uvicorn main:app --host 0.0.0.0 --port 8080
-   # or
-   python main.py
-   ```
-3. Test the endpoint:
+Use the following dev script to bootstrap a local session (update the JSON path):
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+export GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/finlit-adk-sa.json
+uvicorn main:app --reload --port 8080
+```
+
+With the server running, test the episode endpoint:
    ```bash
    curl -X POST http://localhost:8080/actions/run_credit_card_episode \
      -H "Content-Type: application/json" \
@@ -109,9 +107,8 @@ The loop retries once more if the critic flags missing rubric coverage.
      --region $GCP_REGION \
      --platform managed \
      --allow-unauthenticated \
-     --set-env-vars GCP_PROJECT=$GCP_PROJECT,GCP_REGION=$GCP_REGION,
-                    GEMINI_MODEL_ID=$GEMINI_MODEL_ID,VEO_MODEL_ID=$VEO_MODEL_ID,
-                    VEO_OUTPUT_GCS=$VEO_OUTPUT_GCS
+     --service-account=finlit-adk@$GCP_PROJECT.iam.gserviceaccount.com \
+     --set-env-vars="GCP_PROJECT=$GCP_PROJECT,GCP_REGION=$GCP_REGION,GEMINI_MODEL_ID=$GEMINI_MODEL_ID,VEO_MODEL_ID=$VEO_MODEL_ID,VEO_OUTPUT_GCS=$VEO_OUTPUT_GCS"
    ```
 4. **Invoke the service** using the Cloud Run HTTPS URL (same JSON payload as local testing).
 

@@ -1,23 +1,31 @@
+from dataclasses import dataclass
 import os
+
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
 
-# API Keys
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-VEO_API_KEY = os.getenv('VEO_API_KEY')
+GCP_PROJECT = os.getenv("GCP_PROJECT")
+GCP_REGION = os.getenv("GCP_REGION", "us-central1")
+GEMINI_MODEL_ID = os.getenv("GEMINI_MODEL_ID", "google/gemini-2.5-pro")
+VEO_MODEL_ID = os.getenv("VEO_MODEL_ID", "veo-3.0-fast-generate-001")
+VEO_OUTPUT_GCS = os.getenv("VEO_OUTPUT_GCS")
 
-# Add other API keys as needed
-# OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-# ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY')
 
-# Validate required keys
-def validate_api_keys():
-    required_keys = ['GEMINI_API_KEY', 'VEO_API_KEY']
-    missing_keys = [key for key in required_keys if not globals()[key]]
-    
-    if missing_keys:
-        raise ValueError(f"Missing required API keys: {', '.join(missing_keys)}")
-    
-    return True
+@dataclass(frozen=True)
+class Settings:
+    project: str | None = GCP_PROJECT
+    region: str = GCP_REGION
+    gemini_model_id: str = GEMINI_MODEL_ID
+    veo_model_id: str = VEO_MODEL_ID
+    veo_output_gcs: str | None = VEO_OUTPUT_GCS
+
+
+SETTINGS = Settings()
+
+
+def require_project() -> str:
+    """Ensure a GCP project is configured before making API calls."""
+    if not SETTINGS.project:
+        raise EnvironmentError("Set GCP_PROJECT or GOOGLE_CLOUD_PROJECT before using Vertex AI or GCS clients")
+    return SETTINGS.project

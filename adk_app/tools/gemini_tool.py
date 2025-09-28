@@ -1,11 +1,18 @@
 # tools/gemini_tool.py
-import os, json, re, requests, google.auth
-from typing import Dict, Any
+import json
+import os
+import re
+from typing import Any, Dict
+
+import requests
+from google.auth import default
 from google.auth.transport.requests import Request
 
-PROJECT_ID = os.getenv("GCP_PROJECT") or os.getenv("GOOGLE_CLOUD_PROJECT")
-LOCATION = os.getenv("GCP_REGION") or os.getenv("GOOGLE_CLOUD_REGION") or "us-central1"
-MODEL_ID = os.getenv("GEMINI_MODEL_ID", "google/gemini-2.5-pro")
+from config import SETTINGS
+
+PROJECT_ID = SETTINGS.project or os.getenv("GOOGLE_CLOUD_PROJECT")
+LOCATION = SETTINGS.region or os.getenv("GOOGLE_CLOUD_REGION") or "us-central1"
+MODEL_ID = SETTINGS.gemini_model_id or "google/gemini-2.5-pro"
 
 if not PROJECT_ID:
     raise EnvironmentError("Set GCP_PROJECT or GOOGLE_CLOUD_PROJECT for Gemini API calls")
@@ -30,7 +37,7 @@ def _endpoint() -> str:
     return f"{_API_ROOT}/{_model_resource(MODEL_ID)}:generateContent"
 
 def _bearer() -> str:
-    creds, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+    creds, _ = default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
     if not creds.valid:
         creds.refresh(Request())
     return creds.token

@@ -8,5 +8,5 @@ google-cloud-storage
 google-adk
 fastapi
 uvicorn
-
+uvicorn[standard]
 

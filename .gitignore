@@ -9,6 +9,7 @@ venv/
 
 # Environment configs
 .env
+*.json
 
 # IDE files
 .vscode/

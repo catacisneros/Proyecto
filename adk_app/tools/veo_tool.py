@@ -1,18 +1,21 @@
 # tools/veo_tool.py
 # Minimal Veo wrapper for ADK agents. Uses REST + OAuth and supports LRO polling.
 
+import json
 import os
 import time
-import json
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
+
 import requests
-import google.auth
+from google.auth import default
 from google.auth.transport.requests import Request
 
-PROJECT_ID = os.getenv("GCP_PROJECT") or os.getenv("GOOGLE_CLOUD_PROJECT")
-LOCATION = os.getenv("GCP_REGION") or os.getenv("GOOGLE_CLOUD_REGION") or "us-central1"
-MODEL_ID = os.getenv("VEO_MODEL_ID", "veo-3.0-fast-generate-001")  # fast for demos
-OUTPUT_GCS = os.getenv("VEO_OUTPUT_GCS", "")  # e.g., gs://your-bucket/episodes/
+from config import SETTINGS
+
+PROJECT_ID = SETTINGS.project or os.getenv("GOOGLE_CLOUD_PROJECT")
+LOCATION = SETTINGS.region or os.getenv("GOOGLE_CLOUD_REGION") or "us-central1"
+MODEL_ID = SETTINGS.veo_model_id or "veo-3.0-fast-generate-001"  # fast for demos
+OUTPUT_GCS = (SETTINGS.veo_output_gcs or os.getenv("VEO_OUTPUT_GCS") or "").strip()
 
 if not PROJECT_ID:
     raise EnvironmentError("Set GCP_PROJECT or GOOGLE_CLOUD_PROJECT for Veo API calls")
@@ -37,7 +40,7 @@ def _veo_endpoint() -> str:
 
 
 def _get_bearer() -> str:
-    creds, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+    creds, _ = default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
     if not creds.valid:
         creds.refresh(Request())
     return creds.token
